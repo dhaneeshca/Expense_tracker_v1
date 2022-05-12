@@ -5,3 +5,27 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+Status.destroy_all
+
+Status.create!([
+    {
+        status_state: "probation"
+    },
+    {
+        status_state: "working"
+    },
+    {
+        status_state: "terminated"
+    },
+    {
+        status_state: "pending"
+    },
+    {
+        status_state: "approved"
+    },
+    {
+        status_state: "rejected"
+    }
+])
+
+p "Created #{Status.count} statuses"
