@@ -58,6 +58,7 @@ class EmployeesController < ApplicationController
     @status_state = Status.find_by status_state: "pending"
 
     params[:expenses].each do |item|
+      item[:employee_id] = params[:id]
       unless item.key?(:status_id)
         item[:status_id] = @status_state.id
       end
@@ -65,13 +66,21 @@ class EmployeesController < ApplicationController
         item[:admin_id] = @admin.id
       end
     end
-    @expenses = Expense.create(params.permit(expenses: [:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id]).require(:expenses))
+
+    @expenses = Expense.create(params.permit(expenses: [:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id]).require(:expenses))
 
     # Raise error if any failed
     unless @expenses.all?(&:persisted?)
       format.json { render json: @expenses.errors, status: :unprocessable_entity }
     end
 
+    @status_state = Status.find_by status_state: "rejected"
+
+    @expenses.each do |item|
+      if item.invoice_num%2 != 0
+        item.status = @status_state
+      end
+    end
 
   end
 
