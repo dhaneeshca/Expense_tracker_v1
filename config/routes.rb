@@ -1,9 +1,14 @@
 Rails.application.routes.draw do
-  resources :expenses
-  resources :employees
-  resources :statuses
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
+  resources :admins
+    constraints ->(request){request.format == 'json' }do
+      resources :expenses do
+        member do
+          get :arrive
+        end
+      end
+      resources :employees
+      resources :statuses
+    end
   # Defines the root path route ("/")
   # root "articles#index"
 end
