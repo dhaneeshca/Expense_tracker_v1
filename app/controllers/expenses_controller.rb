@@ -52,10 +52,6 @@ class ExpensesController < ApplicationController
     end
   end
 
-  def arrive
-    @expense = Expense.find(params[:id])
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_expense
@@ -64,6 +60,14 @@ class ExpensesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def expense_params
+      unless params["expense"].key?(:status_id)
+        @status_state = Status.find_by status_state: "pending"
+        params["expense"][:status_id] = @status_state.id
+      end
+      unless params["expense"].key?(:admin_id)
+        @admin = Admin.first
+        params["expense"][:admin_id] = @admin.id
+      end
       params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id)
     end
 end
