@@ -68,6 +68,6 @@ class ExpensesController < ApplicationController
         @admin = Admin.first
         params["expense"][:admin_id] = @admin.id
       end
-      params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id)
+      params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id)
     end
 end

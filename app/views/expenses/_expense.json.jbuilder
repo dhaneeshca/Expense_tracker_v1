@@ -8,10 +8,16 @@ json.amount expense.amount
 json.vendor expense.vendor
 json.expense_date expense.exp_date
 
+json.employee do
+    json.name expense.employee.firstname+" "+expense.employee.lastname
+    @employee = expense.employee
+    json.url employee_url(@employee,format: :json)
+end
+
 json.status do
     json.state expense.status.status_state
-    status = expense.status
-    json.url status_url(status,format: :json)
+    @status = expense.status
+    json.url status_url(@status,format: :json)
 end
 # json.admin expense.admin
 json.admin do
