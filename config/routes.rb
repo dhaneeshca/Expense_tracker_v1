@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
   resources :admins
     constraints ->(request){request.format == 'json' }do
-      resources :expenses do
+      resources :expenses
+      resources :employees do
         member do
-          get :arrive
+         post :post_expenses
         end
       end
-      resources :employees
       resources :statuses
     end
   # Defines the root path route ("/")

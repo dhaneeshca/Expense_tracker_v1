@@ -52,6 +52,29 @@ class EmployeesController < ApplicationController
     end
   end
 
+  # Post all th expenses
+  def post_expenses
+    @admin = Admin.first
+    @status_state = Status.find_by status_state: "pending"
+
+    params[:expenses].each do |item|
+      unless item.key?(:status_id)
+        item[:status_id] = @status_state.id
+      end
+      unless item.key?(:admin_id)
+        item[:admin_id] = @admin.id
+      end
+    end
+    @expenses = Expense.create(params.permit(expenses: [:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id]).require(:expenses))
+
+    # Raise error if any failed
+    unless @expenses.all?(&:persisted?)
+      format.json { render json: @expenses.errors, status: :unprocessable_entity }
+    end
+
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_employee
