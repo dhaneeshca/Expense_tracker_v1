@@ -13,6 +13,11 @@ json.status do
     status = expense.status
     json.url status_url(status,format: :json)
 end
+# json.admin expense.admin
+json.admin do
+    json.admin_assigned expense.admin.name
+    # json.url admin_url(admin,format: :json)
+end
 json.comments expense.comments
 json.extras expense.extras
 json.url expense_url(expense, format: :json)
