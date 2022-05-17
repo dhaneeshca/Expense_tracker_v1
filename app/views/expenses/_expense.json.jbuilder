@@ -24,6 +24,5 @@ json.admin do
     json.admin_assigned expense.admin.name
     # json.url admin_url(admin,format: :json)
 end
-json.comments expense.comments
 json.extras expense.extras
 json.url expense_url(expense, format: :json)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_16_164620) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_16_175249) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,6 +20,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_16_164620) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "password_digest"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.string "message"
+    t.string "user"
+    t.integer "user_id"
+    t.integer "order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "expense_id", null: false
+    t.index ["expense_id"], name: "index_comments_on_expense_id"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -49,7 +60,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_16_164620) do
     t.bigint "status_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "comments"
     t.string "extras"
     t.bigint "admin_id", null: false
     t.bigint "employee_id", null: false
@@ -64,6 +74,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_16_164620) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "comments", "expenses"
   add_foreign_key "employees", "statuses"
   add_foreign_key "expenses", "admins"
   add_foreign_key "expenses", "employees"
