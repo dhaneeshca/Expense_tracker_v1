@@ -14,6 +14,10 @@ json.employee do
     json.url employee_url(@employee,format: :json)
 end
 
+# json.comments(expense.comment) do |comment|
+#     json.url comment_url(comment, format: :json)
+# end
+print expense.comment
 json.status do
     json.state expense.status.status_state
     @status = expense.status

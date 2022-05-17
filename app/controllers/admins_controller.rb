@@ -62,7 +62,6 @@ class AdminsController < ApplicationController
 
     params[:comment][:user] = "admin"
     params[:comment][:user_id] = params[:id]
-    @expense = Expense.find(params[:comment][:expense_id])
     begin
       @comments = Comment.where(expense_id: params[:comment][:expense_id])
       @count = @comments.count + 1

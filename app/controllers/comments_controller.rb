@@ -24,6 +24,10 @@ class CommentsController < ApplicationController
     end
   end
 
+  def search
+    @comments = Comment.where(expense_id: params[:expense_id])
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_comment
