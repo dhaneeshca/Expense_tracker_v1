@@ -22,7 +22,6 @@ class ExpensesController < ApplicationController
   # POST /expenses.json
   def create
     @expense = Expense.new(expense_params)
-
     respond_to do |format|
       if @expense.save
         format.json { render :show, status: :created, location: @expense }
@@ -52,6 +51,14 @@ class ExpensesController < ApplicationController
     end
   end
 
+  def upload_image
+    set_expense
+    @expense.invoice_img.attach(params[:image_url])
+    unless @expense.invoice_img.attached?
+      format.json { render json: "failed", status: :unprocessable_entity}
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_expense
@@ -68,6 +75,6 @@ class ExpensesController < ApplicationController
         @admin = Admin.first
         params["expense"][:admin_id] = @admin.id
       end
-      params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id)
+      params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id, :invoice_img)
     end
 end

@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
-  constraints ->(request){request.format == 'json' }do
-    resources :expenses
+  # constraints ->(request){request.format == 'json' }do
+    resources :expenses do
+      member do
+        post :upload_image
+    end
+  end
     resources :employees do
       member do
         post :post_expenses
@@ -19,7 +23,7 @@ Rails.application.routes.draw do
         get :search
       end
     end
-  end
+  # end
   # Defines the root path route ("/")
   # root "articles#index"
 end
