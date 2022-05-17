@@ -56,10 +56,30 @@ class AdminsController < ApplicationController
     set_admin
     @employee = Employee.find(params[:emp_id])
     @expenses = Expense.where(employee: @employee)
-    print @expenses
   end
 
-  private
+  def add_comment
+
+    params[:comment][:user] = "admin"
+    params[:comment][:user_id] = params[:id]
+    @expense = Expense.find(params[:comment][:expense_id])
+    begin
+      @comments = Comment.where(expense_id: params[:comment][:expense_id])
+      @count = @comments.count + 1
+    rescue Exception => e
+      @count = 1
+    end
+    params[:comment][:order] = @count
+
+    begin
+      @comment = Comment.create(params.require(:comment).permit(:message, :user, :user_id, :order, :expense_id))
+    rescue Exception => e
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+    end
+
+  end
+
+    private
     # Use callbacks to share common setup or constraints between actions.
     def set_admin
       @admin = Admin.find(params[:id])

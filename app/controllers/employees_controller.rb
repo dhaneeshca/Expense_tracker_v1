@@ -84,6 +84,28 @@ class EmployeesController < ApplicationController
 
   end
 
+  def add_comment
+
+    params[:comment][:user] = "employee"
+    params[:comment][:user_id] = params[:id]
+    @expense = Expense.find(params[:comment][:expense_id])
+    begin
+      @comments = Comment.where(expense_id: params[:comment][:expense_id])
+      @count = @comments.count + 1
+    rescue Exception => e
+      @count = 1
+    end
+    params[:comment][:order] = @count
+
+    begin
+      @comment = Comment.create(params.require(:comment).permit(:message, :user, :user_id, :order, :expense_id))
+    rescue Exception => e
+      format.json { render json: @comment.errors, status: :unprocessable_entity }
+    end
+
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_employee
