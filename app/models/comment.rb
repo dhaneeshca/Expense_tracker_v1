@@ -1,3 +1,3 @@
 class Comment < ApplicationRecord
-    has_many :expenses, class_name: "expense", foreign_key: "reference_id"
+    belongs_to :expense
 end

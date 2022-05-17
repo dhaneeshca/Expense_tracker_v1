@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :comments
   constraints ->(request){request.format == 'json' }do
     resources :expenses
     resources :employees do
@@ -13,6 +12,11 @@ Rails.application.routes.draw do
       member do
         get :search
         post :add_comment
+      end
+    end
+    resources :comments do
+      member do
+        get :search
       end
     end
   end
