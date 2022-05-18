@@ -74,10 +74,20 @@ class AdminsController < ApplicationController
     rescue Exception => e
       format.json { render json: @comment.errors, status: :unprocessable_entity }
     end
-
+    @expense = Expense.find(params[:comment][:expense_id])
+    @employee = Employee.find(@expense.employee_id)
+    message = {}
+    message[:email] = @employee.email
+    message[:subject] = "Admin commented on Expense with invoice number ",@expense.invoice_num
+    message[:content] = params[:comment][:message]
+    NotificationMailer.new_email(message).deliver_later
   end
 
-    private
+  def approve_request
+    params[:request]
+  end
+
+  private
     # Use callbacks to share common setup or constraints between actions.
     def set_admin
       @admin = Admin.find(params[:id])
