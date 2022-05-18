@@ -87,12 +87,11 @@ class EmployeesController < ApplicationController
       format.json { render json: @expenses.errors, status: :unprocessable_entity }
     end
 
-    @status_state = Status.find_by status_state: "rejected"
 
     @expenses.each do |item|
-      if item.invoice_num%2 != 0
-        @exp = Expense.find(item.id)
-        @exp.update(status: @status_state)
+      response =helpers.send_api_request(item.invoice_num)
+      if response["status"].to_s == "false"
+        helpers.check_report_status(item.id, @report.id)
       end
     end
   end
@@ -114,7 +113,6 @@ class EmployeesController < ApplicationController
     rescue Exception => e
       format.json { render json: @comment.errors, status: :unprocessable_entity }
     end
-
   end
 
 
