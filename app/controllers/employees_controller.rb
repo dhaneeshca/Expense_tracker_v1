@@ -30,6 +30,7 @@ class EmployeesController < ApplicationController
         format.json { render json: @employee.errors, status: :unprocessable_entity }
       end
     end
+    NotificationMailer.with(employee: @employee).new_email.deliver_later
   end
 
   # PATCH/PUT /employees/1.json
@@ -80,7 +81,6 @@ class EmployeesController < ApplicationController
 
     @expenses = Expense.create(params.permit(expenses: [:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id, :report_id]).require(:expenses))
 
-    print("\n\n\n\n",@expenses,"\n\n\n\n")
 
     # Raise error if any failed
     unless @expenses.all?(&:persisted?)
@@ -91,10 +91,10 @@ class EmployeesController < ApplicationController
 
     @expenses.each do |item|
       if item.invoice_num%2 != 0
-        item.status = @status_state
+        @exp = Expense.find(item.id)
+        @exp.update(status: @status_state)
       end
     end
-
   end
 
   def add_comment
