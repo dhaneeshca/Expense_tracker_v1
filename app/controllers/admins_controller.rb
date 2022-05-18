@@ -53,7 +53,6 @@ class AdminsController < ApplicationController
   end
 
   def search
-    set_admin
     @employee = Employee.find(params[:emp_id])
     @expenses = Expense.where(employee: @employee)
   end
