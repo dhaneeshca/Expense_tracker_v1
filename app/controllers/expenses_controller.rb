@@ -75,6 +75,14 @@ class ExpensesController < ApplicationController
         @admin = Admin.first
         params["expense"][:admin_id] = @admin.id
       end
-      params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id, :invoice_img)
+      unless params["expense"].key?(:report_title)
+        params["expense"][:report_title] = ""
+      end
+      params["expense"][:applied_amt] = 0
+      params["expense"][:reimb_amt] = 0
+      @report = Report.create(params.require(:expense).permit(:title, :applied_amt, :reimb_amt))
+      params["expense"][:report_id] = @report.id
+      print("\n\n\n",params,"\n\n\n")
+      params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id, :invoice_img, :report_id)
     end
 end

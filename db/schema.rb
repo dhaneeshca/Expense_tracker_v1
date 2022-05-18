@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_17_082743) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_17_111533) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -91,9 +91,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_17_082743) do
     t.string "extras"
     t.bigint "admin_id", null: false
     t.bigint "employee_id", null: false
+    t.bigint "report_id", null: false
     t.index ["admin_id"], name: "index_expenses_on_admin_id"
     t.index ["employee_id"], name: "index_expenses_on_employee_id"
+    t.index ["report_id"], name: "index_expenses_on_report_id"
     t.index ["status_id"], name: "index_expenses_on_status_id"
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.string "title"
+    t.integer "applied_amt"
+    t.integer "reimb_amt"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "statuses", force: :cascade do |t|
@@ -108,5 +118,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_17_082743) do
   add_foreign_key "employees", "statuses"
   add_foreign_key "expenses", "admins"
   add_foreign_key "expenses", "employees"
+  add_foreign_key "expenses", "reports"
   add_foreign_key "expenses", "statuses"
 end

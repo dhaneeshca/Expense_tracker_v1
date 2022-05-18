@@ -57,6 +57,16 @@ class EmployeesController < ApplicationController
     @admin = Admin.first
     @status_state = Status.find_by status_state: "pending"
 
+    params[:reports][:applied_amt] = 0
+    params[:reports][:reimb_amt] = 0
+
+    unless params.key?(:reports)
+      params[:reports][:title] = " "
+    end
+
+    @report = Report.create(params.require(:reports).permit(:title, :applied_amt, :reimb_amt))
+
+
     params[:expenses].each do |item|
       item[:employee_id] = params[:id]
       unless item.key?(:status_id)
@@ -65,9 +75,12 @@ class EmployeesController < ApplicationController
       unless item.key?(:admin_id)
         item[:admin_id] = @admin.id
       end
+      item[:report_id] = @report.id
     end
 
-    @expenses = Expense.create(params.permit(expenses: [:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id]).require(:expenses))
+    @expenses = Expense.create(params.permit(expenses: [:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id, :report_id]).require(:expenses))
+
+    print("\n\n\n\n",@expenses,"\n\n\n\n")
 
     # Raise error if any failed
     unless @expenses.all?(&:persisted?)
