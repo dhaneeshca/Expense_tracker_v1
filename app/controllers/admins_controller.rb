@@ -84,7 +84,20 @@ class AdminsController < ApplicationController
   end
 
   def approve_request
-    params[:request]
+    accepted_state = Status.find_by status_state: "approved"
+    rejected_state = Status.find_by status_state: "rejected"
+    if params[:expenses]["approved"] != []
+     @approved_expenses = Expense.where(id: params[:expenses]["approved"]).update(status: accepted_state)
+      @approved_expenses.each do |exp|
+        helpers.check_report_status_admin(exp.report_id)
+      end
+    end
+    if params[:expenses]["rejected"] != []
+      @rejected_expenses = Expense.where(id: params[:expenses]["rejected"]).update(status: rejected_state)
+      @rejected_expenses.each do |exp|
+        helpers.check_report_status_admin(exp.report_id)
+      end
+    end
   end
 
   private

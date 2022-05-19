@@ -24,6 +24,12 @@ class ExpensesController < ApplicationController
     @expense = Expense.new(expense_params)
     respond_to do |format|
       if @expense.save
+        response =helpers.send_api_request(@expense.invoice_num)
+        if response["status"].to_s == "false"
+          status_state = Status.find_by status_state: "rejected"
+          @expense.update(status: status_state)
+          helpers.check_report_status_exp(@expense.report_id)
+        end
         format.json { render :show, status: :created, location: @expense }
       else
         format.json { render json: @expense.errors, status: :unprocessable_entity }
@@ -77,11 +83,11 @@ class ExpensesController < ApplicationController
         params["expense"][:admin_id] = @admin.id
       end
       unless params["expense"].key?(:report_title)
-        params["expense"][:report_title] = ""
+        params["expense"][:title] = ""
       end
-      params["expense"][:applied_amt] = 0
-      params["expense"][:reimb_amt] = 0
-      @report = Report.create(params.require(:expense).permit(:title, :applied_amt, :reimb_amt))
+      params["expense"][:title] = params["expense"][:report_title]
+
+      @report = Report.create(params.require(:expense).permit(:title))
       params["expense"][:report_id] = @report.id
 
       params.require(:expense).permit(:invoice_num, :category, :description, :amount, :vendor, :exp_date, :status_id, :extras, :comments, :admin_id, :employee_id, :invoice_img, :report_id)
