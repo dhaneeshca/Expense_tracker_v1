@@ -1,5 +1,9 @@
 class EmployeesController < ApplicationController
+  include ActionController::HttpAuthentication::Token
+
   before_action :set_employee, only: %i[ show edit update destroy ]
+  before_action :authenticate_employee, only: %i[ post_expenses add_comment ]
+
 
   # GET /employees.json
   def index
@@ -25,6 +29,8 @@ class EmployeesController < ApplicationController
 
     respond_to do |format|
       if @employee.save
+        api_key = AuthenticationTokenService.encode(@employee.id)
+        @employee.update(api_key: api_key)
         format.json { render :show, status: :created, location: @employee }
       else
         format.json { render json: @employee.errors, status: :unprocessable_entity }
@@ -55,7 +61,7 @@ class EmployeesController < ApplicationController
   # Post all th expenses
   def post_expenses
     @admin = Admin.first
-    @status_state = Status.find_by status_state: "pending"
+    status_state = Status.find_by status_state: "pending"
 
     unless params.key?(:reports)
       params[:reports][:title] = " "
@@ -66,7 +72,7 @@ class EmployeesController < ApplicationController
     params[:expenses].each do |item|
       item[:employee_id] = params[:id]
       unless item.key?(:status_id)
-        item[:status_id] = @status_state.id
+        item[:status_id] = status_state.id
       end
       unless item.key?(:admin_id)
         item[:admin_id] = @admin.id
@@ -79,7 +85,7 @@ class EmployeesController < ApplicationController
 
     # Raise error if any failed
     unless @expenses.all?(&:persisted?)
-      format.json { render json: @expenses.errors, status: :unprocessable_entity }
+      render json: @expenses.errors, status: :unprocessable_entity
     end
 
 
@@ -88,7 +94,7 @@ class EmployeesController < ApplicationController
       if response["status"].to_s == "false"
         status_state = Status.find_by status_state: "rejected"
         item.update(status: status_state)
-        helpers.check_report_status(item.id, @report.id)
+        helpers.check_report_status(@report.id)
       end
     end
   end
@@ -99,11 +105,11 @@ class EmployeesController < ApplicationController
     params[:comment][:user_id] = params[:id]
     begin
       @comments = Comment.where(expense_id: params[:comment][:expense_id])
-      @count = @comments.count + 1
+      count = @comments.count + 1
     rescue Exception => e
-      @count = 1
+      count = 1
     end
-    params[:comment][:order] = @count
+    params[:comment][:order] = count
 
     begin
       @comment = Comment.create(params.require(:comment).permit(:message, :user, :user_id, :order, :expense_id))
@@ -117,6 +123,13 @@ class EmployeesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_employee
       @employee = Employee.find(params[:id])
+    end
+
+    def authenticate_employee
+      token,_options = token_and_options(request)
+      if AuthenticationTokenService.decode(token) == false
+        render json: { success: "unauthorized entry" }
+      end
     end
 
     # Only allow a list of trusted parameters through.

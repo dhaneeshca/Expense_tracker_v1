@@ -63,11 +63,11 @@ class AdminsController < ApplicationController
     params[:comment][:user_id] = params[:id]
     begin
       @comments = Comment.where(expense_id: params[:comment][:expense_id])
-      @count = @comments.count + 1
+      count = @comments.count + 1
     rescue Exception => e
-      @count = 1
+      count = 1
     end
-    params[:comment][:order] = @count
+    params[:comment][:order] = count
 
     begin
       @comment = Comment.create(params.require(:comment).permit(:message, :user, :user_id, :order, :expense_id))
