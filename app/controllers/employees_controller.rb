@@ -30,7 +30,6 @@ class EmployeesController < ApplicationController
         format.json { render json: @employee.errors, status: :unprocessable_entity }
       end
     end
-    NotificationMailer.with(employee: @employee).new_email.deliver_later
   end
 
   # PATCH/PUT /employees/1.json

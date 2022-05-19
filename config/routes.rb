@@ -16,7 +16,7 @@ Rails.application.routes.draw do
       member do
         get :search
         post :add_comment
-        post :approve_request
+        post :manage_request
       end
     end
     resources :comments do
