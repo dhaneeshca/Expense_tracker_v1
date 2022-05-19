@@ -61,9 +61,10 @@ class ExpensesController < ApplicationController
     set_expense
     @expense.invoice_img.attach(params[:image_url])
     unless @expense.invoice_img.attached?
-      format.json { render json: "failed", status: :unprocessable_entity}
+      render json: "failed", status: :unprocessable_entity
+    else
+      render json: { success: true }
     end
-    render json: { success: true }
   end
 
   private
@@ -75,8 +76,8 @@ class ExpensesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def expense_params
       unless params["expense"].key?(:status_id)
-        @status_state = Status.find_by status_state: "pending"
-        params["expense"][:status_id] = @status_state.id
+        status_state = Status.find_by status_state: "pending"
+        params["expense"][:status_id] = status_state.id
       end
       unless params["expense"].key?(:admin_id)
         @admin = Admin.first

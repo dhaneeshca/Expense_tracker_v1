@@ -15,13 +15,13 @@ module EmployeesHelper
         return response
     end
 
-    def check_report_status(item_id, report_id)
+    def check_report_status(report_id)
         pending_state = Status.find_by status_state: "pending"
 
         status_id =pending_state.id
 
-        @query = "select count(*) from expenses where report_id = %d and  status_id = %d;" % [report_id, status_id]
-        records_array = ActiveRecord::Base.connection.execute(@query)
+        query = "select count(*) from expenses where report_id = %d and  status_id = %d;" % [report_id, status_id]
+        records_array = ActiveRecord::Base.connection.execute(query)
         if records_array.present?
             if records_array[0]["count"]==0
                 fill_report(report_id)

@@ -8,7 +8,7 @@ json.joining_date employee.joining_date
 json.department employee.department
 json.salary employee.salary
 json.email employee.email
-
+json.api_key employee.api_key
 json.status do
     json.state employee.status.status_state
     status = employee.status

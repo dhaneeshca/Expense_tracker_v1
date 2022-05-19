@@ -6,8 +6,8 @@ module ExpensesHelper
         @report = Report.find(report_id)
         status_id =pending_state.id
 
-        @query = "select count(*) from expenses where report_id = %d and  status_id = %d;" % [report_id, status_id]
-        records_array = ActiveRecord::Base.connection.execute(@query)
+        query = "select count(*) from expenses where report_id = %d and  status_id = %d;" % [report_id, status_id]
+        records_array = ActiveRecord::Base.connection.execute(query)
         if records_array.present?
             if records_array[0]["count"] == 0 and @report.mail_flag == 0
                 fill_report_exp(report_id)
@@ -19,11 +19,11 @@ module ExpensesHelper
     def fill_report_exp(report_id)
         expenses = Expense.where(report_id: report_id)
         req_amt, reimb_amt, exp_id = 0, 0, 0
-        @status_state = Status.find_by status_state: "rejected"
+        status_state = Status.find_by status_state: "rejected"
 
         expenses.each do |item|
             req_amt += item.amount
-            unless item.status_id == @status_state.id
+            unless item.status_id == status_state.id
                 reimb_amt += item.amount
             end
             exp_id = item.employee_id
