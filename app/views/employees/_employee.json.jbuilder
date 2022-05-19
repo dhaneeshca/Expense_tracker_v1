@@ -7,6 +7,7 @@ json.sex employee.sex
 json.joining_date employee.joining_date
 json.department employee.department
 json.salary employee.salary
+json.email employee.email
 
 json.status do
     json.state employee.status.status_state

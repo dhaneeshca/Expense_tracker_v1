@@ -58,15 +58,11 @@ class EmployeesController < ApplicationController
     @admin = Admin.first
     @status_state = Status.find_by status_state: "pending"
 
-    params[:reports][:applied_amt] = 0
-    params[:reports][:reimb_amt] = 0
-
     unless params.key?(:reports)
       params[:reports][:title] = " "
     end
 
-    @report = Report.create(params.require(:reports).permit(:title, :applied_amt, :reimb_amt))
-
+    @report = Report.create(params.require(:reports).permit(:title))
 
     params[:expenses].each do |item|
       item[:employee_id] = params[:id]
@@ -91,6 +87,8 @@ class EmployeesController < ApplicationController
     @expenses.each do |item|
       response =helpers.send_api_request(item.invoice_num)
       if response["status"].to_s == "false"
+        status_state = Status.find_by status_state: "rejected"
+        item.update(status: status_state)
         helpers.check_report_status(item.id, @report.id)
       end
     end
