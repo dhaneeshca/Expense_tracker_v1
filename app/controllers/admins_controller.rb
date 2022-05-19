@@ -83,7 +83,7 @@ class AdminsController < ApplicationController
     NotificationMailer.new_email(message).deliver_later
   end
 
-  def approve_request
+  def manage_request
     accepted_state = Status.find_by status_state: "approved"
     rejected_state = Status.find_by status_state: "rejected"
     if params[:expenses]["approved"] != []
