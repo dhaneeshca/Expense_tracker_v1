@@ -60,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_19_104137) do
     t.bigint "expense_id", null: false
     t.index ["expense_id"], name: "index_comments_on_expense_id"
   end
-
+#enforce index in db level
   create_table "employees", force: :cascade do |t|
     t.string "firstname"
     t.string "lastname"
@@ -89,7 +89,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_19_104137) do
     t.bigint "status_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "extras"
+    t.string "extras"#jsonb,hstore
     t.bigint "admin_id", null: false
     t.bigint "employee_id", null: false
     t.bigint "report_id", null: false

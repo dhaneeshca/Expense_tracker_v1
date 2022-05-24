@@ -1,9 +1,9 @@
 class Expense < ApplicationRecord
   belongs_to :status
-  belongs_to :admin
+  belongs_to :admin #make ,optional=true
   belongs_to :employee
   belongs_to :report
-  has_many :comment, class_name: "comment", foreign_key: "reference_id"
+  has_many :comments, class_name: "comment", foreign_key: "reference_id"
 
 
   validates :invoice_num, presence: true, length: { is: 6 }

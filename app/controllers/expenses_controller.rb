@@ -58,8 +58,9 @@ class ExpensesController < ApplicationController
   end
 
   def upload_image
+
     set_expense
-    @expense.invoice_img.attach(params[:image_url])
+    @expense.invoice_img.attach(params["image_url"])
     unless @expense.invoice_img.attached?
       render json: "failed", status: :unprocessable_entity
     else
