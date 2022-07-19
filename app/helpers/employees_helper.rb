@@ -2,7 +2,7 @@ module EmployeesHelper
     def send_api_request(invoice_num)
         url = "https://my.api.mockaroo.com/invoices.json"
         payload = {:invoice_id => invoice_num}
-        response = HTTParty.post(
+        response = HTTParty.post( # Faraday
             url,
             {
             body: payload.to_json,
